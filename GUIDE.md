@@ -1,148 +1,115 @@
-## User Guide of how to develop a Dify Plugin
+Guide: Real-time Stock Researcher Dify Plugin
+This guide provides instructions on how to set up and effectively use the Real-time Stock Researcher Dify Plugin within your Dify applications (Chatflows, Workflows, or Agents).
 
-Hi there, looks like you have already created a Plugin, now let's get you started with the development!
+1. What is the Real-time Stock Researcher Plugin?
+The Real-time Stock Researcher Dify Plugin is a tool designed to instantly retrieve current stock prices and basic market data for specified company ticker symbols. It integrates directly with external Financial APIs, allowing your Dify applications to query live market data using natural language commands or structured inputs.
 
-### Choose a Plugin type you want to develop
+Key Features:
 
-Before start, you need some basic knowledge about the Plugin types, Plugin supports to extend the following abilities in Dify:
-- **Tool**: Tool Providers like Google Search, Stable Diffusion, etc. it can be used to perform a specific task.
-- **Model**: Model Providers like OpenAI, Anthropic, etc. you can use their models to enhance the AI capabilities.
-- **Endpoint**: Like Service API in Dify and Ingress in Kubernetes, you can extend a http service as an endpoint and control its logics using your own code.
+Search for real-time stock prices by ticker symbol (e.g., AAPL, MSFT).
 
-Based on the ability you want to extend, we have divided the Plugin into three types: **Tool**, **Model**, and **Extension**.
+Retrieve the most recent price and last updated timestamp.
 
-- **Tool**: It's a tool provider, but not only limited to tools, you can implement an endpoint there, for example, you need both `Sending Message` and `Receiving Message` if you are building a Discord Bot, **Tool** and **Endpoint** are both required.
-- **Model**: Just a model provider, extending others is not allowed.
-- **Extension**: Other times, you may only need a simple http service to extend the functionalities, **Extension** is the right choice for you.
+Seamless integration into Dify workflows and conversational AI for financial inquiries.
 
-I believe you have chosen the right type for your Plugin while creating it, if not, you can change it later by modifying the `manifest.yaml` file.
+2. Setup and Configuration
+Before using the plugin, you need to configure your Financial API credentials within Dify.
 
-### Manifest
+2.1. Obtain Financial API Credentials
+Financial API Provider Account: You will need an account with a financial data API provider (e.g., Alpha Vantage, Finnhub, Twelve Data). Many offer free tiers for limited usage.
 
-Now you can edit the `manifest.yaml` file to describe your Plugin, here is the basic structure of it:
+API Key: Obtain your API Key from your chosen financial API provider's developer dashboard.
 
-- version(version, required)：Plugin's version
-- type(type, required)：Plugin's type, currently only supports `plugin`, future support `bundle`
-- author(string, required)：Author, it's the organization name in Marketplace and should also equals to the owner of the repository
-- label(label, required)：Multi-language name
-- created_at(RFC3339, required)：Creation time, Marketplace requires that the creation time must be less than the current time
-- icon(asset, required)：Icon path
-- resource (object)：Resources to be applied
-  - memory (int64)：Maximum memory usage, mainly related to resource application on SaaS for serverless, unit bytes
-  - permission(object)：Permission application
-    - tool(object)：Reverse call tool permission
-      - enabled (bool)
-    - model(object)：Reverse call model permission
-      - enabled(bool)
-      - llm(bool)
-      - text_embedding(bool)
-      - rerank(bool)
-      - tts(bool)
-      - speech2text(bool)
-      - moderation(bool)
-    - node(object)：Reverse call node permission
-      - enabled(bool) 
-    - endpoint(object)：Allow to register endpoint permission
-      - enabled(bool)
-    - app(object)：Reverse call app permission
-      - enabled(bool)
-    - storage(object)：Apply for persistent storage permission
-      - enabled(bool)
-      - size(int64)：Maximum allowed persistent memory, unit bytes
-- plugins(object, required)：Plugin extension specific ability yaml file list, absolute path in the plugin package, if you need to extend the model, you need to define a file like openai.yaml, and fill in the path here, and the file on the path must exist, otherwise the packaging will fail.
-  - Format
-    - tools(list[string]): Extended tool suppliers, as for the detailed format, please refer to [Tool Guide](https://docs.dify.ai/plugins/schema-definition/tool)
-    - models(list[string])：Extended model suppliers, as for the detailed format, please refer to [Model Guide](https://docs.dify.ai/plugins/schema-definition/model)
-    - endpoints(list[string])：Extended Endpoints suppliers, as for the detailed format, please refer to [Endpoint Guide](https://docs.dify.ai/plugins/schema-definition/endpoint)
-  - Restrictions
-    - Not allowed to extend both tools and models
-    - Not allowed to have no extension
-    - Not allowed to extend both models and endpoints
-    - Currently only supports up to one supplier of each type of extension
-- meta(object)
-  - version(version, required)：manifest format version, initial version 0.0.1
-  - arch(list[string], required)：Supported architectures, currently only supports amd64 arm64
-  - runner(object, required)：Runtime configuration
-    - language(string)：Currently only supports python
-    - version(string)：Language version, currently only supports 3.12
-    - entrypoint(string)：Program entry, in python it should be main
+API Endpoint (if applicable): While some APIs use a single base URL, others might have specific endpoints for different data types. Identify the base URL for the real-time stock price API that you intend to use.
 
-### Install Dependencies
+2.2. Configure Credentials in Dify
+Navigate to your Dify application's "Plugins" or "Tools" section.
 
-- First of all, you need a Python 3.11+ environment, as our SDK requires that.
-- Then, install the dependencies:
-    ```bash
-    pip install -r requirements.txt
-    ```
-- If you want to add more dependencies, you can add them to the `requirements.txt` file, once you have set the runner to python in the `manifest.yaml` file, `requirements.txt` will be automatically generated and used for packaging and deployment.
+Locate the "Real-time Stock Researcher" plugin.
 
-### Implement the Plugin
+Go to its "Credentials" or "Settings" area.
 
-Now you can start to implement your Plugin, by following these examples, you can quickly understand how to implement your own Plugin:
+Enter your financial_api_key in the designated "Financial API Key" field.
 
-- [OpenAI](https://github.com/langgenius/dify-plugin-sdks/tree/main/python/examples/openai): best practice for model provider
-- [Google Search](https://github.com/langgenius/dify-plugin-sdks/tree/main/python/examples/google): a simple example for tool provider
-- [Neko](https://github.com/langgenius/dify-plugin-sdks/tree/main/python/examples/neko): a funny example for endpoint group
+(Optional, but often required for custom setups) Enter your financial_api_endpoint in the "Financial API Base URL" field if your chosen API requires a specific base URL for this service.
 
-### Test and Debug the Plugin
+Save the configurations.
 
-You may already noticed that a `.env.example` file in the root directory of your Plugin, just copy it to `.env` and fill in the corresponding values, there are some environment variables you need to set if you want to debug your Plugin locally.
+3. Using the Real-time Stock Researcher Tool
+Once configured, you can invoke the stock_researcher tool in your Dify applications.
 
-- `INSTALL_METHOD`: Set this to `remote`, your plugin will connect to a Dify instance through the network.
-- `REMOTE_INSTALL_URL`: The URL of debugging host and port of plugin-daemon service from your Dify instance, eg. `debug.dify.ai:5003`. Either the [Dify SaaS](https://debug.dify.ai) or [self-hosted Dify instance](https://docs.dify.ai/en/getting-started/install-self-hosted/readme) can be used.
-- `REMOTE_INSTALL_KEY`: You should get your debugging key from the Dify instance you used, at the right top of the plugin management page, you can see a button with a `debug` icon, click it and you will get the key.
+3.1. Tool Parameters
+The stock_researcher tool accepts the following parameter:
 
-Run the following command to start your Plugin:
+symbol (string, required):
 
-```bash
-python -m main
-```
+Description: The ticker symbol of the stock you wish to research (e.g., AAPL for Apple, MSFT for Microsoft, GOOG for Google).
 
-Refresh the page of your Dify instance, you should be able to see your Plugin in the list now, but it will be marked as `debugging`, you can use it normally, but not recommended for production.
+Example: "TSLA", "AMZN", "NVDA"
 
-### Publish and Update the Plugin
+3.2. Invoking the Tool
+In a Chatflow/Agent:
+Your Dify Agent, when prompted by a user, can identify the intent to search for stock prices and call the tool.
 
-To streamline your plugin update workflow, you can configure GitHub Actions to automatically create PRs to the Dify plugin repository whenever you create a release.
+User Input Example: "What is the current stock price of Apple?"
 
-##### Prerequisites
+Agent Action: The LLM would recognize "Apple" and infer "AAPL" as the symbol, then trigger the stock_researcher tool.
 
-- Your plugin source repository
-- A fork of the dify-plugins repository
-- Proper plugin directory structure in your fork
+In a Workflow:
+You can add a "Tool" node in your workflow, select "Real-time Stock Researcher," and map an input variable (e.g., from a "Text Input" node) to the symbol parameter.
 
-#### Configure GitHub Action
+4. Understanding the Output
+Upon successful execution, the stock_researcher tool returns a structured JSON object containing the stock's information. This JSON can then be processed by subsequent LLM steps or displayed directly to the user.
 
-1. Create a Personal Access Token with write permissions to your forked repository
-2. Add it as a secret named `PLUGIN_ACTION` in your source repository settings
-3. Create a workflow file at `.github/workflows/plugin-publish.yml`
+Example Output (JSON):
 
-#### Usage
+{
+  "stock_info": {
+    "symbol": "AAPL",
+    "current_price": 178.55,
+    "last_updated_utc": "2025-06-27 09:30:00 UTC"
+  }
+}
 
-1. Update your code and the version in your `manifest.yaml`
-2. Create a release in your source repository
-3. The action automatically packages your plugin and creates a PR to your forked repository
+The Dify interface will typically display this information in a readable format, often as a card or directly in the chat, e.g., "The current price of AAPL is $178.55 as of 2025-06-27 09:30:00 UTC."
 
-#### Benefits
+5. Use Cases
+Financial News & Updates: Provide real-time stock prices in a chatbot for market enthusiasts.
 
-- Eliminates manual packaging and PR creation steps
-- Ensures consistency in your release process
-- Saves time during frequent updates
+Portfolio Tracking: Integrate into applications that help users monitor their investments.
 
----
+Market Analysis Tools: Automate data retrieval for financial analysis and reporting.
 
-For detailed setup instructions and example configuration, visit: [GitHub Actions Workflow Documentation](https://docs.dify.ai/plugins/publish-plugins/plugin-auto-publish-pr)
+Educational Content: Help users learn about stock market data in an interactive way.
 
-### Package the Plugin
+6. Important Disclaimer: NOT FINANCIAL ADVICE
+THIS PLUGIN IS PROVIDED FOR INFORMATIONAL PURPOSES ONLY AND DOES NOT CONSTITUTE FINANCIAL ADVICE OR A RECOMMENDATION TO BUY, SELL, OR HOLD ANY SECURITIES. IT IS NOT INTENDED TO BE A SUBSTITUTE FOR PROFESSIONAL FINANCIAL CONSULTATION. ALWAYS CONSULT WITH A QUALIFIED FINANCIAL ADVISOR OR PROFESSIONAL FOR ADVICE REGARDING YOUR SPECIFIC FINANCIAL SITUATION OR INVESTMENT DECISIONS. NEVER DISREGARD PROFESSIONAL FINANCIAL ADVICE OR DELAY IN SEEKING IT BECAUSE OF INFORMATION OBTAINED THROUGH THIS PLUGIN.
 
-After all, just package your Plugin by running the following command:
+7. Troubleshooting
+"Financial API key is not configured" / "Financial API endpoint is not configured":
 
-```bash
-dify-plugin plugin package ./ROOT_DIRECTORY_OF_YOUR_PLUGIN
-```
+Solution: Go to the plugin's credentials in Dify and ensure both the API key and the base URL (if required) are correctly entered and saved.
 
-you will get a `plugin.difypkg` file, that's all, you can submit it to the Marketplace now, look forward to your Plugin being listed!
+"Error from Financial API: 4xx/5xx":
 
+Solution: This indicates an issue with the API call itself.
 
-## User Privacy Policy
+Check your Financial API key for correctness and ensure it has the necessary permissions.
 
-Please fill in the privacy policy of the plugin if you want to make it published on the Marketplace, refer to [PRIVACY.md](PRIVACY.md) for more details.
+Verify the API endpoint URL is exact and accessible.
+
+Consult your financial API's documentation for specific error codes (e.g., invalid symbol, rate limits).
+
+The financial API service might be temporarily unavailable.
+
+"Stock symbol XYZ not found...":
+
+Solution: The provided ticker symbol might be incorrect, misspelled, or not supported by the integrated API. Double-check the symbol.
+
+"Error parsing Financial API response...":
+
+Solution: This suggests the Financial API's response format might have changed, or it returned an unexpected structure. You may need to review the plugin's Python code to adapt to the new response format based on the API's latest documentation.
+
+Network Error:
+
+Solution: Check your internet connection and ensure Dify's environment has outgoing network access to the financial API endpoint.
