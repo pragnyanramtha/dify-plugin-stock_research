@@ -1,0 +1,52 @@
+version: 0.0.1
+type: plugin
+author: pragnyan_ramtha
+name: stock_researcher
+label:
+  en_US: stock_researcher
+  ja_JP: stock_researcher
+  zh_Hans: stock_researcher
+  pt_BR: stock_researcher
+description:
+  en_US: This plugin will fetch the current stock price for a given stock symbol
+  ja_JP: This plugin will fetch the current stock price for a given stock symbol
+  zh_Hans: This plugin will fetch the current stock price for a given stock symbol
+  pt_BR: This plugin will fetch the current stock price for a given stock symbol
+icon: icon.svg
+resource:
+  memory: 268435456
+  permission:
+    tool:
+      enabled: true
+    model:
+      enabled: true
+      llm: true
+      text_embedding: true
+      rerank: true
+      tts: true
+      speech2text: false
+      moderation: false
+    endpoint:
+      enabled: true
+    app:
+      enabled: true
+    storage:
+      enabled: true
+      size: 1048576
+plugins:
+  tools:
+    - provider/stock_researcher.yaml
+meta:
+  version: 0.0.1
+  arch:
+    - amd64
+    - arm64
+  runner:
+    language: python
+    version: "3.12"
+    entrypoint: main
+  minimum_dify_version: null
+created_at: 2025-06-26T15:35:44.088928259Z
+privacy: PRIVACY.md
+repo: https://github.com/pragnyanramtha/dify-plugin-stock_research
+verified: false
