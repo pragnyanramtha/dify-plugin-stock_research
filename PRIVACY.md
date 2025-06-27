@@ -41,4 +41,4 @@ THIS PLUGIN IS PROVIDED FOR INFORMATIONAL PURPOSES ONLY AND DOES NOT CONSTITUTE 
 We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on the Plugin's listing or associated documentation within the Dify platform. You are advised to review this Privacy Policy periodically for any changes.
 
 10. Contact Us
-If you have any questions about this Privacy Policy or the Plugin's data practices, please contact the Plugin developer (YourName/YourCompany) through the Dify platform's support channels.
+If you have any questions about this Privacy Policy or the Plugin's data practices, please contact the Plugin developer (pragnyanramtha) through the Dify platform's support channels.
