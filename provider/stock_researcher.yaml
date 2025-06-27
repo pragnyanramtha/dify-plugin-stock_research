@@ -2,9 +2,9 @@ identity:
   author: "pragnyan_ramtha"
   name: "stock_researcher"
   label:
-    en_US: "stock_researcher"
-    zh_Hans: "stock_researcher"
-    pt_BR: "stock_researcher"
+    en_US: stock researcher
+    zh_Hans: 股票研究员
+    pt_BR: pesquisador de ações
   description:
     en_US: "This plugin will fetch the current stock price for a given stock symbol"
     zh_Hans: "This plugin will fetch the current stock price for a given stock symbol"
