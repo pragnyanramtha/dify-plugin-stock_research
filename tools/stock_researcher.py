@@ -29,7 +29,7 @@ class StockResearcherTool(Tool):
             ToolInvokeMessage: A JSON message containing the stock price information.
             ToolInvokeMessage: Text messages for progress or errors.
         """
-        symbol = tool_parameters.get("symbol")
+        symbol = tool_parameters.get("query")
 
         if not symbol:
             yield self.create_text_message("Error: Missing required parameter 'symbol'.")
@@ -43,24 +43,18 @@ class StockResearcherTool(Tool):
         if not api_key:
             yield self.create_text_message("Error: Financial API key is not configured.")
             return
-        
+        url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={api_key}"
         try:
-            response = requests.get(f"YOUR_FINANCIAL_API_ENDPOINT?symbol={symbol}&apikey={api_key}")
+            response = requests.get(url)
             response.raise_for_status()
             data = response.json()
-            current_price = data.get("price")
-            last_updated = data.get("timestamp")
         except requests.exceptions.RequestException as e:
             yield self.create_text_message(f"Error fetching stock data: {e}")
             return
 
 
         # Prepare the structured output
-        result = {
-            "symbol": symbol.upper(),
-            "current_price": current_price,
-            "last_updated_utc": last_updated
-        }
+        result = data
 
         # Yield the results as a JSON message
         yield self.create_json_message({"stock_info": result})
